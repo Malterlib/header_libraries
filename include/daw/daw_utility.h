@@ -957,8 +957,9 @@ namespace daw {
 #if not( defined( _MSC_VER ) and defined( __clang__ ) )
 	template<typename T, std::size_t Alignment = alignof( T )>
 	inline T *get_buffer( std::size_t count ) noexcept {
-		return reinterpret_cast<T *>(
-		  ::aligned_alloc( Alignment, sizeof( T ) * count ) );
+		void *memory;
+		posix_memalign( &memory, Alignment, sizeof( T ) * count );
+		return reinterpret_cast<T *>(memory);
 	}
 #endif
 
