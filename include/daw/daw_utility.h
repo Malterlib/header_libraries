@@ -949,13 +949,15 @@ namespace daw {
 	/// aligned_alloc is not in clang-cl 13 with vs2022
 	template<typename T, std::size_t Alignment = alignof( T )>
 	inline T *get_buffer( std::size_t count ) noexcept {
-		return reinterpret_cast<T *>(
 #if defined( __MINGW32__ ) or defined( _MSC_VER )
+		return reinterpret_cast<T *>(
 		  _aligned_malloc( sizeof( T ) * count, Alignment )
-#else
-		  ::aligned_alloc( Alignment, sizeof( T ) * count )
-#endif
 		);
+#else
+		void *memory;
+		posix_memalign( &memory, Alignment, sizeof( T ) * count );
+		return reinterpret_cast<T *>(memory);
+#endif
 	}
 
 	template<typename T>
