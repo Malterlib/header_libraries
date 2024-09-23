@@ -41,8 +41,8 @@ namespace daw {
 		static_assert( std::is_default_constructible_v<To>,
 		               "To must be default constructible" );
 
-		auto result = std::aligned_storage_t<sizeof( To ), alignof( To )>{ };
-		return *static_cast<To *>( std::memcpy( &result, &from, sizeof( To ) ) );
+		alignas( To ) uint8_t result[sizeof( To )] = {};
+		return *static_cast<To *>( std::memcpy( result, &from, sizeof( To ) ) );
 	}
 } // namespace daw
 
